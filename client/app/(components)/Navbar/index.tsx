@@ -27,9 +27,29 @@ const Navbar = () => {
       {/* right side  */}
       <div className="flex justify-between items-center gap-5">
         <div className="hidden md:flex justify-between items-center gap-5 ">
-          <button>
-            <Sun className="cursor-pointer text-gray-500" size={24} />
-          </button>
+          <div>
+            <button>
+              <Sun className="cursor-pointer text-gray-500" size={24} />
+            </button>
+          </div>
+        </div>
+        <div className="relative ">
+          <Bell className="cursor-pointer text-gray-500" size={24} />
+          <span className="absolute -top-2 inline-flex items-center justify-center px-[0.4rem] py-1 text-xs font-semibold leading-none text-red-100 bg-red-400 rounded-full ">
+            3
+          </span>
+        </div>
+        <div className="hidden md:flex justify-between items-center gap-5">
+          <div>
+            <button>
+              <Sun className="cursor-pointer text-gray-500" size={24} />
+            </button>
+          </div>
+          <hr className="w-0 h-7 border border-solid border-l border-gray-300 mx-3" />
+          <div className="flex items-center gap-3 cursor-pointer">
+            <div className="w-9 h-9 rounded-full bg-gray-200" /> {/* avatar */}
+            <span className="font-semibold">Saket</span>
+          </div>
         </div>
       </div>
     </div>
