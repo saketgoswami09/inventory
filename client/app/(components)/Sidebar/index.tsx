@@ -153,7 +153,7 @@ const Sidebar = () => {
               isSidebarCollapsed ? "justify-center" : "justify-start px-4"
             }`}
           >
-            <div className="relative w-5 h-5 flex-shrink-0">
+            <div className="relative w-5 h-5 shrink-0">
               <Image
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100&auto=format&fit=crop"
                 alt="User avatar"
