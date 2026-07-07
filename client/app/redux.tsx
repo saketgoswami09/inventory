@@ -22,7 +22,7 @@ import {
 } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
-
+import type { Persistor } from "redux-persist";
 /* REDUX PERSISTENCE */
 const createNoopStorage = () => {
   return {
@@ -81,17 +81,17 @@ export default function StoreProvider({
   children: React.ReactNode;
 }) {
   const storeRef = useRef<AppStore>();
+  const persistorRef = useRef<Persistor>();
+
   if (!storeRef.current) {
     storeRef.current = makeStore();
     setupListeners(storeRef.current.dispatch);
+    persistorRef.current = persistStore(storeRef.current);
   }
-  const persistor = persistStore(storeRef.current);
 
   return (
     <Provider store={storeRef.current}>
-      <PersistGate loading={null} persistor={persistor}>
-        {children}
-      </PersistGate>
+      <PersistGate persistor={persistorRef.current!}>{children}</PersistGate>
     </Provider>
   );
 }
