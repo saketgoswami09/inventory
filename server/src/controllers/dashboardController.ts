@@ -1,38 +1,35 @@
+import "dotenv/config";
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "../../generated/prisma";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+
+const prisma = new PrismaClient({ adapter });
 
 export const getDashboardMetrics = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    // Run all independent queries in parallel
+    // Run all independent database queries in parallel
     const [
       popularProducts,
       salesSummary,
-      purchases,
       purchaseSummary,
-      expenses,
       expenseSummary,
-      expenseByCategory,
+      expenseByCategorySummaryRaw,
     ] = await Promise.all([
       prisma.products.findMany({
-        take: 5,
+        take: 15,
         orderBy: {
-          date: "desc",
+          stockQuantity: "desc",
         },
       }),
 
       prisma.salesSummary.findMany({
-        take: 5,
-        orderBy: {
-          date: "desc",
-        },
-      }),
-
-      prisma.purchases.findMany({
         take: 5,
         orderBy: {
           date: "desc",
@@ -46,13 +43,6 @@ export const getDashboardMetrics = async (
         },
       }),
 
-      prisma.expenses.findMany({
-        take: 5,
-        orderBy: {
-          date: "desc",
-        },
-      }),
-
       prisma.expenseSummary.findMany({
         take: 5,
         orderBy: {
@@ -60,23 +50,28 @@ export const getDashboardMetrics = async (
         },
       }),
 
-      prisma.expenseByCategory.findMany(),
+      prisma.expenseByCategory.findMany({
+        take: 5,
+        orderBy: {
+          date: "desc",
+        },
+      }),
     ]);
 
-    // Convert Prisma Decimal values to string for JSON serialization
-    const formattedExpenseByCategory = expenseByCategory.map((item) => ({
-      ...item,
-      amount: item.amount.toString(),
-    }));
+    // Convert BigInt to string before sending JSON
+    const expenseByCategorySummary = expenseByCategorySummaryRaw.map(
+      (item) => ({
+        ...item,
+        amount: item.amount.toString(),
+      }),
+    );
 
     res.status(200).json({
       popularProducts,
       salesSummary,
-      purchases,
       purchaseSummary,
-      expenses,
       expenseSummary,
-      expenseByCategory: formattedExpenseByCategory,
+      expenseByCategorySummary,
     });
   } catch (error) {
     console.error("Error retrieving dashboard metrics:", error);
