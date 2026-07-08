@@ -1,0 +1,23 @@
+<svg width="22" height="41" viewBox="0 0 22 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_ig_2043_624)">
+<path d="M0.520772 4.75824L5.32537 38.081C5.66363 40.4271 9.07897 40.3394 9.29647 37.9791L10.8511 21.1083C10.9206 20.354 11.4103 19.7037 12.116 19.4285L17.7225 17.2422C18.358 16.9944 18.8233 16.4399 18.9571 15.7711L20.5451 7.83084C20.6692 7.21029 20.4923 6.56762 20.0681 6.098L15.6072 1.15942C15.1487 0.651862 14.4627 0.413785 13.7884 0.528242L2.16562 2.50103C1.09578 2.68261 0.365913 3.6842 0.520772 4.75824Z" fill="#FFB132"/>
+<path d="M0.520772 4.75824L5.32537 38.081C5.66363 40.4271 9.07897 40.3394 9.29647 37.9791L10.8511 21.1083C10.9206 20.354 11.4103 19.7037 12.116 19.4285L17.7225 17.2422C18.358 16.9944 18.8233 16.4399 18.9571 15.7711L20.5451 7.83084C20.6692 7.21029 20.4923 6.56762 20.0681 6.098L15.6072 1.15942C15.1487 0.651862 14.4627 0.413785 13.7884 0.528242L2.16562 2.50103C1.09578 2.68261 0.365913 3.6842 0.520772 4.75824Z" stroke="white" stroke-opacity="0.62"/>
+</g>
+<defs>
+<filter id="filter0_ig_2043_624" x="0" y="0" width="21.084" height="44.2957" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.34 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_2043_624"/>
+<feTurbulence type="fractalNoise" baseFrequency="0.99900001287460327 0.99900001287460327" numOctaves="3" seed="4526" />
+<feDisplacementMap in="effect1_innerShadow_2043_624" scale="0" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%" />
+<feMerge result="effect2_texture_2043_624">
+<feMergeNode in="displacedImage"/>
+</feMerge>
+</filter>
+</defs>
+</svg>

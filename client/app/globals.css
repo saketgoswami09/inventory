@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-
+@custom-variant dark (&:where(.dark, .dark *));
 
 *,
 *::before,
@@ -12,9 +12,9 @@ html,
 body,
 #root,
 .app {
-  height: 100%;
-  width: 100%;
-  @apply text-sm;
-  @apply bg-gray-50;
-  @apply text-gray-900;
+  @apply text-sm bg-gray-50 text-gray-900;
+}
+
+.dark body {
+  @apply bg-gray-950 text-gray-100;
 }

@@ -21,7 +21,7 @@ const Navbar = () => {
   const isDarkMode = useSelector((state: any) => state.global.isDarkMode);
 
   return (
-    <div className="flex justify-between rounded-xl  items-center w-full px-4 py-3 bg-white border-b border-gray-100 shadow-sm transition-all">
+    <div className="flex justify-between rounded-xl  items-center w-full px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm transition-all">
       {/* ─── LEFT PANEL SECTION ─── */}
       <div className="flex items-center gap-4">
         {/* Dynamic Action Trigger: Changes direction organically depending on state mappings */}
@@ -80,7 +80,7 @@ const Navbar = () => {
             prefetch={false}
             className="flex items-center gap-3 group"
           >
-            <div className="relative w-8 h-8 flex-shrink-0">
+            <div className="relative w-8 h-8 shrink-0">
               <Image
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100&auto=format&fit=crop"
                 alt="User dynamic interface avatar"
