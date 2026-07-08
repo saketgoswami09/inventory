@@ -1,23 +1,27 @@
 "use client";
 
-import { setIsDarkMode, setIsSidebarCollapsed } from "../../state/index";
-import { Bell, ChevronLeft, Menu, Search, Settings, Sun, Moon } from "lucide-react";
+import { setIsDarkMode } from "../../state/index";
+import {
+  Bell,
+ 
+  Search,
+  Settings,
+  Sun,
+  Moon,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image"; // ⚡ Next.js optimized images
 import { useDispatch, useSelector } from "react-redux";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  
+
   // Clean state selector mapping with typo tolerance handling
-  const isSidebarCollapsed = useSelector(
-    (state: any) => state.global.isSidebarCollapsed || state.global.isSidebarCollapsed
-  );
+
   const isDarkMode = useSelector((state: any) => state.global.isDarkMode);
 
   return (
-    <div className="flex justify-between rounded-xl  items-center w-full px-4 py-3 bg-white border-b border-gray-100 shadow-sm transition-all">
-      
+    <div className="flex justify-between rounded-xl  items-center w-full px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm transition-all">
       {/* ─── LEFT PANEL SECTION ─── */}
       <div className="flex items-center gap-4">
         {/* Dynamic Action Trigger: Changes direction organically depending on state mappings */}
@@ -44,12 +48,10 @@ const Navbar = () => {
 
       {/* ─── RIGHT PANEL ACTION UTILITIES ─── */}
       <div className="flex items-center gap-4">
-        
         {/* Action Controls Container Group (Hidden on minor viewports) */}
         <div className="hidden md:flex items-center gap-4">
-          
           {/* Theme Dynamic Controller Switch */}
-          <button 
+          <button
             onClick={() => dispatch(setIsDarkMode(!isDarkMode))}
             className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all"
             title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
@@ -60,7 +62,7 @@ const Navbar = () => {
               <Moon className="w-5 h-5 text-gray-600" />
             )}
           </button>
-          
+
           {/* Notification Alert Target Anchor */}
           <div className="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-xl cursor-pointer transition-all">
             <Bell className="w-5 h-5" />
@@ -73,8 +75,12 @@ const Navbar = () => {
           <div className="h-5 w-[1px] bg-gray-200 mx-1" />
 
           {/* User Meta Card component profile interface block */}
-          <Link href="/profile" prefetch={false} className="flex items-center gap-3 group">
-            <div className="relative w-8 h-8 flex-shrink-0">
+          <Link
+            href="/profile"
+            prefetch={false}
+            className="flex items-center gap-3 group"
+          >
+            <div className="relative w-8 h-8 shrink-0">
               <Image
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100&auto=format&fit=crop"
                 alt="User dynamic interface avatar"
@@ -91,8 +97,8 @@ const Navbar = () => {
         </div>
 
         {/* Global Direct App Configuration Link Route */}
-        <Link 
-          href="/settings" 
+        <Link
+          href="/settings"
           prefetch={false}
           className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all"
           title="System Settings"
