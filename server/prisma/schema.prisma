@@ -10,8 +10,14 @@ datasource db {
   provider = "postgresql"
 }
 
+model Users {
+  userId String @id
+  name   String
+  email  String
+}
+
 model Products {
-  productId     String    @id
+  productId     String      @id
   name          String
   price         Float
   rating        Float?
@@ -31,13 +37,20 @@ model Sales {
 }
 
 model Purchases {
-  purchaseId  String   @id
-  productId   String
-  timestamp   DateTime
-  quantity    Int
-  unitCost    Float
-  totalCost   Float
-  product     Products @relation(fields: [productId], references: [productId])
+  purchaseId String   @id
+  productId  String
+  timestamp  DateTime
+  quantity   Int
+  unitCost   Float
+  totalCost  Float
+  product    Products @relation(fields: [productId], references: [productId])
+}
+
+model Expenses {
+  expenseId String   @id
+  category  String
+  amount    Float
+  timestamp DateTime
 }
 
 model SalesSummary {
@@ -52,19 +65,6 @@ model PurchaseSummary {
   totalPurchased    Float
   changePercentage  Float?
   date              DateTime
-}
-
-model Users {
-  userId    String @id
-  name      String
-  email     String
-}
-
-model Expenses {
-  expenseId String   @id
-  category  String
-  amount    Float
-  timestamp DateTime
 }
 
 model ExpenseSummary {
