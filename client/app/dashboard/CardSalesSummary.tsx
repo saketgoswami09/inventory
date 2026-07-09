@@ -2,16 +2,15 @@
 
 import { useGetDashboardMetricsQuery } from "../state/api";
 import { TrendingDown, TrendingUp, DollarSign } from "lucide-react";
-import numeral from "numeral";
 import React, { useState } from "react";
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
 } from "recharts";
 
 const CardSalesSummary = () => {
@@ -20,19 +19,31 @@ const CardSalesSummary = () => {
 
   const [timeframe, setTimeframe] = useState("weekly");
 
-  // Get latest sales data entry
-  const lastDataPoint = salesData[salesData.length - 1] || null;
+  const totalValueSum =
+    salesData.reduce((acc, curr) => acc + curr.totalValue, 0) || 0;
 
-  // Calculate average or highest sale value for summary
-  const totalSalesCount = salesData.length;
-  const totalSalesSum = salesData.reduce((acc, curr) => acc + curr.totalValue, 0);
-  const averageSales = totalSalesCount ? totalSalesSum / totalSalesCount : 0;
+  const averageChangePercentage =
+    salesData.reduce((acc, curr, _, array) => {
+      return acc + (curr.changePercentage || 0) / array.length;
+    }, 0) || 0;
+
+  const highestValueData = salesData.reduce((acc, curr) => {
+    return (acc.totalValue || 0) > (curr.totalValue || 0) ? acc : curr;
+  }, salesData[0] || {});
+
+  const highestValueDate = highestValueData.date
+    ? new Date(highestValueData.date).toLocaleDateString("en-US", {
+        month: "numeric",
+        day: "numeric",
+        year: "2-digit",
+      })
+    : "N/A";
 
   return (
-    <div className="flex flex-col justify-between row-span-3 col-span-1 md:col-span-2 xl:col-span-2 bg-white border border-gray-100 shadow-sm rounded-2xl transition-all duration-200 hover:shadow-md">
+    <div className="row-span-3 xl:row-span-6 flex flex-col justify-between bg-white border border-gray-100 shadow-sm rounded-2xl transition-all duration-200 hover:shadow-md">
       {isLoading ? (
         /* ─── SKELETON LOADING STATE ─── */
-        <div className="p-6 animate-pulse flex flex-col justify-between h-full min-h-[320px]">
+        <div className="p-6 animate-pulse flex flex-col justify-between h-full min-h-[350px]">
           <div className="flex justify-between items-center mb-4">
             <div className="h-4 w-32 bg-gray-200 rounded" />
             <div className="h-8 w-24 bg-gray-200 rounded-lg" />
@@ -41,106 +52,104 @@ const CardSalesSummary = () => {
             <div className="h-3 w-20 bg-gray-100 rounded mb-2" />
             <div className="h-8 w-36 bg-gray-200 rounded" />
           </div>
-          <div className="h-48 w-full bg-gray-100 rounded-xl mt-auto" />
+          <div className="h-52 w-full bg-gray-100 rounded-xl my-auto" />
+          <div className="h-4 w-full bg-gray-100 rounded mt-4" />
         </div>
       ) : isError ? (
         /* ─── ERROR STATE ─── */
-        <div className="flex flex-col items-center justify-center p-8 min-h-[320px] text-center">
+        <div className="flex flex-col items-center justify-center p-8 min-h-[350px] text-center">
           <div className="p-3 rounded-full bg-rose-50 text-rose-500 mb-2">
             <DollarSign className="w-6 h-6" />
           </div>
-          <p className="text-sm font-semibold text-gray-900">Unable to load sales metrics</p>
-          <p className="text-xs text-gray-400 mt-1">Check your network connection and try again</p>
+          <p className="text-sm font-semibold text-gray-900">
+            Failed to fetch sales summary
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Please check your server connection or try again.
+          </p>
         </div>
       ) : (
         <>
-          {/* ─── HEADER & TIMEFRAME SELECTOR ─── */}
-          <div className="p-6 pb-2 flex items-center justify-between border-b border-gray-50">
-            <div>
-              <h2 className="text-base font-semibold text-gray-900">
-                Sales Summary
-              </h2>
-              <p className="mt-0.5 text-xs text-gray-400">
-                Total revenue trends over time
-              </p>
-            </div>
-
-            {/* Timeframe Dropdown Select */}
-            <select
-              className="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-xl p-2 focus:outline-none focus:border-gray-400 transition-colors cursor-pointer"
-              value={timeframe}
-              onChange={(e) => setTimeframe(e.target.value)}
-            >
-              <option value="daily font-medium">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
+          {/* ─── HEADER ─── */}
+          <div>
+            <h2 className="text-base font-semibold text-gray-900 px-7 pt-5 mb-2">
+              Sales Summary
+            </h2>
+            <hr className="border-gray-100" />
           </div>
 
-          {/* ─── BODY METRICS ─── */}
-          <div className="flex-1 flex flex-col justify-between pt-4">
-            <div className="px-6 mb-2 flex flex-wrap items-end justify-between gap-4">
+          {/* ─── BODY ─── */}
+          <div className="flex-1 flex flex-col justify-between">
+            {/* BODY HEADER */}
+            <div className="flex justify-between items-center mb-4 px-7 mt-5">
               <div>
-                <p className="text-xs font-medium text-gray-400">Total Sales Value</p>
-                <div className="flex items-center gap-2.5 mt-1">
-                  <p className="text-3xl font-bold tracking-tight text-gray-950">
-                    {lastDataPoint
-                      ? numeral(lastDataPoint.totalValue).format("$0.00a").toUpperCase()
-                      : "$0.00"}
-                  </p>
-
+                <p className="text-xs font-medium text-gray-400">Value</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-2xl font-extrabold tracking-tight text-gray-950">
+                    $
+                    {(totalValueSum / 1000000).toLocaleString("en", {
+                      maximumFractionDigits: 2,
+                    })}
+                    m
+                  </span>
+                  
                   {/* TREND BADGE */}
-                  {lastDataPoint?.changePercentage !== undefined && (
-                    <span
-                      className={`flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        lastDataPoint.changePercentage >= 0
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "bg-rose-50 text-rose-600"
-                      }`}
-                    >
-                      {lastDataPoint.changePercentage >= 0 ? (
-                        <TrendingUp className="w-3.5 h-3.5 mr-1" />
-                      ) : (
-                        <TrendingDown className="w-3.5 h-3.5 mr-1" />
-                      )}
-                      {Math.abs(lastDataPoint.changePercentage).toFixed(1)}%
-                    </span>
-                  )}
+                  <span
+                    className={`flex items-center text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      averageChangePercentage >= 0
+                        ? "bg-emerald-50 text-emerald-600"
+                        : "bg-rose-50 text-rose-600"
+                    }`}
+                  >
+                    {averageChangePercentage >= 0 ? (
+                      <TrendingUp className="w-3.5 h-3.5 mr-1" />
+                    ) : (
+                      <TrendingDown className="w-3.5 h-3.5 mr-1" />
+                    )}
+                    {averageChangePercentage.toFixed(2)}%
+                  </span>
                 </div>
               </div>
 
-              {/* Secondary Metric Highlight */}
-              <div className="text-right hidden sm:block">
-                <p className="text-xs font-medium text-gray-400">Average Sale</p>
-                <p className="text-sm font-semibold text-gray-700 mt-0.5">
-                  {numeral(averageSales).format("$0.0a").toUpperCase()}
-                </p>
-              </div>
+              {/* TIMEFRAME SELECTOR */}
+              <select
+                className="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-xl p-2 focus:outline-none focus:border-gray-400 transition-colors cursor-pointer"
+                value={timeframe}
+                onChange={(e) => setTimeframe(e.target.value)}
+              >
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
             </div>
 
-            {/* ─── RECHARTS AREA CHART ─── */}
-            <div className="w-full h-52 mt-auto px-2 pb-2">
+            {/* BAR CHART */}
+            <div className="w-full h-64 px-4">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
+                <BarChart
                   data={salesData}
                   margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                 >
-                  {/* EMERALD GREEN GRADIENT ACCENT */}
-                  <defs>
-                    <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.35} />
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.01} />
-                    </linearGradient>
-                  </defs>
-
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-
-                  <XAxis dataKey="date" tick={false} axisLine={false} />
-                  <YAxis tickLine={false} tick={false} axisLine={false} />
-
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: "#94a3b8" }}
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return `${date.getMonth() + 1}/${date.getDate()}`;
+                    }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: "#94a3b8" }}
+                    tickFormatter={(value) => `$${(value / 1000000).toFixed(0)}m`}
+                  />
                   <Tooltip
-                    formatter={(value: number) => [
-                      `$${value.toLocaleString("en")}`,
+                    formatter={(value: any) => [
+                      `$${Number(value || 0).toLocaleString("en")}`,
                       "Sales Value",
                     ]}
                     labelFormatter={(label) => {
@@ -151,6 +160,7 @@ const CardSalesSummary = () => {
                         day: "numeric",
                       });
                     }}
+                    cursor={{ fill: "#f8fafc", radius: 8 }}
                     contentStyle={{
                       backgroundColor: "#ffffff",
                       border: "1px solid #f1f5f9",
@@ -170,24 +180,26 @@ const CardSalesSummary = () => {
                       fontWeight: 700,
                     }}
                   />
-
-                  {/* SMOOTH CURVED EMERALD LINE */}
-                  <Area
-                    type="monotone"
+                  <Bar
                     dataKey="totalValue"
-                    stroke="#10b981"
-                    strokeWidth={2.5}
-                    fill="url(#salesGradient)"
-                    fillOpacity={1}
-                    activeDot={{
-                      r: 6,
-                      strokeWidth: 3,
-                      fill: "#10b981",
-                      stroke: "#ffffff",
-                    }}
+                    fill="#2563eb"
+                    barSize={10}
+                    radius={[10, 10, 0, 0]}
                   />
-                </AreaChart>
+                </BarChart>
               </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* ─── FOOTER ─── */}
+          <div>
+            <hr className="border-gray-100" />
+            <div className="flex justify-between items-center py-4 px-7 text-xs text-gray-500">
+              <p className="font-medium">{salesData.length || 0} days recorded</p>
+              <p>
+                Highest Sales Date:{" "}
+                <span className="font-bold text-gray-900">{highestValueDate}</span>
+              </p>
             </div>
           </div>
         </>
