@@ -1,14 +1,7 @@
 "use client";
 
-import { setIsDarkMode } from "../../state/index";
-import {
-  Bell,
- 
-  Search,
-  Settings,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { setIsDarkMode, setIsSidebarCollapsed } from "../../state/index";
+import { Bell, Search, Settings, Sun, Moon, Menu, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image"; // ⚡ Next.js optimized images
 import { useDispatch, useSelector } from "react-redux";
@@ -19,19 +12,25 @@ const Navbar = () => {
   // Clean state selector mapping with typo tolerance handling
 
   const isDarkMode = useSelector((state: any) => state.global.isDarkMode);
-
+  const isSidebarCollapsed = useSelector(
+    (state: any) => state.global.isSidebarCollapsed,
+  );
   return (
     <div className="flex justify-between rounded-xl  items-center w-full px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm transition-all">
       {/* ─── LEFT PANEL SECTION ─── */}
       <div className="flex items-center gap-4">
         {/* Dynamic Action Trigger: Changes direction organically depending on state mappings */}
-        {/* <button
+        <button
           className="p-2 bg-gray-50 text-gray-500 rounded-xl hover:bg-gray-100 hover:text-gray-900 transition-colors duration-200"
           onClick={() => dispatch(setIsSidebarCollapsed(!isSidebarCollapsed))}
           title={isSidebarCollapsed ? "Expand panel" : "Collapse panel"}
         >
-          {isSidebarCollapsed ? <Menu className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-        </button> */}
+          {isSidebarCollapsed ? (
+            <Menu className="w-5 h-5" />
+          ) : (
+            <ChevronLeft className="w-5 h-5" />
+          )}
+        </button>
 
         {/* Global Search Interface bar Layout */}
         <div className="relative">
