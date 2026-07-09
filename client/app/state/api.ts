@@ -44,6 +44,15 @@ export interface DashboardMetrics {
   expenseByCategorySummary: ExpenseByCategorySummary[];
 }
 
+// Data required while creating a new product
+export interface NewProduct {
+  productId: string;
+  name: string;
+  price: number;
+  rating?: number | null;
+  stockQuantity: number;
+}
+
 export const api = createApi({
   reducerPath: "api",
 
@@ -51,14 +60,40 @@ export const api = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
   }),
 
-  tagTypes: ["DashboardMetrics"],
+  tagTypes: ["DashboardMetrics", "Products"],
 
   endpoints: (builder) => ({
+    // GET /dashboard
     getDashboardMetrics: builder.query<DashboardMetrics, void>({
       query: () => "/dashboard",
       providesTags: ["DashboardMetrics"],
     }),
+
+    // GET /products or GET /products?search=mouse
+    getProducts: builder.query<Product[], string | void>({
+      query: (search) => ({
+        url: "/products",
+        params: search ? { search } : undefined,
+      }),
+
+      providesTags: ["Products"],
+    }),
+
+    // POST /products
+    createProduct: builder.mutation<Product, NewProduct>({
+      query: (newProduct) => ({
+        url: "/products",
+        method: "POST",
+        body: newProduct,
+      }),
+
+      invalidatesTags: ["Products", "DashboardMetrics"],
+    }),
   }),
 });
 
-export const { useGetDashboardMetricsQuery } = api;
+export const {
+  useGetDashboardMetricsQuery,
+  useGetProductsQuery,
+  useCreateProductMutation,
+} = api;
